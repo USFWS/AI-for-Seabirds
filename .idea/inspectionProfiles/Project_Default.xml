@@ -1,0 +1,25 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="pandas" />
+          <option value="opencv-python" />
+          <option value="sahi" />
+          <option value="ultralytics" />
+          <option value="pycocotools" />
+          <option value="numpy" />
+          <option value="labelme2coco" />
+          <option value="tqdm" />
+          <option value="pillow" />
+          <option value="pipreqs" />
+          <option value="label-studio-converter" />
+          <option value="pytorch" />
+          <option value="pascal_voc_writer" />
+          <option value="yolov5" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
