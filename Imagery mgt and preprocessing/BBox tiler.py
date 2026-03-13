@@ -6,9 +6,11 @@ import image_bbox_tiler as ibis
 #os.chdir("E:/a_detection_of_seabirds/new_tiles_test1")
 ## error in Main.py, line 273 is good;  line 300-305 is issue
 
-# im_src = image source, an_src = annotation source
-im_src = "D:/WHCR_2025/12_WHCR_detection/2_whcr_parents_no_duplicates/"
-an_src = "D:/WHCR_2025/12_WHCR_detection/3_annot_voc/"
+# Inputs:
+# im_src = image source
+# an_src = annotation source
+im_src = "C:/BP/test_ai/parents/"
+an_src = "C:/BP/test_ai/parent_voc_ai/"
 
 # error is below
 #os.listdir('E:\\detection_of_seabirds\\demo_parents\\C1_L1_F10_T20230621_132003_892\\')

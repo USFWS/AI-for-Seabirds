@@ -9,16 +9,20 @@ import os
 # Inputs
 ## ann_file = COCO annotation json
 ## output_dir = directory for output PASCAL Voc annotations
-ann_file = "D:/WHCR_2025/12_WHCR_detection/3_whcr_coco.json"
-output_dir = "D:/WHCR_2025/12_WHCR_detection/3_annot_voc/"
+ann_file = "C:/BP/test_ai/annot_parents.json"
+output_dir = "C:/BP/test_ai/annot_parents/annot_parent_voc/"
 
 def coco2voc(ann_file, output_dir):
     coco = COCO(ann_file)
+    print("shhh")
     # cats = class categories
     cats = coco.loadCats(coco.getCatIds())
     cat_idx = {}
+    print("okay1")
     for c in cats:
         cat_idx[c['id']] = c['name']
+
+    print("okay2")
     for img in coco.imgs:
         catIds = coco.getCatIds()
         annIds = coco.getAnnIds(imgIds=[img], catIds=catIds)
@@ -43,4 +47,4 @@ def coco2voc(ann_file, output_dir):
                 print("basename:", basename)
                 writer.save(output_dir+'/'+ basename)
 
-coco2voc(ann_file=ann_file, output_dir= output_dir)
+coco2voc(ann_file = ann_file, output_dir = output_dir)

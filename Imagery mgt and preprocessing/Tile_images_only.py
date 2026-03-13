@@ -11,8 +11,8 @@ import glob
 # tile size = size in pixels
 # overlap = overlap in tiles
 
-output_folder= "C:/users/aware/desktop/Seabird_detection/hive_background_tiles/"
-source_dir = glob.glob("C:/users/aware/desktop/Seabird_detection/Hive_background_empty_parents/*.jpg")
+output_folder= "C:/BP/test_ai/tiles"
+source_dir = glob.glob("C:/BP/test_ai/parents/*.jpg")
 
 tile_size = 1024
 overlap = 0

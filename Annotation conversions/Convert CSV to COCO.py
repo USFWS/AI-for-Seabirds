@@ -5,21 +5,21 @@ import csv
 import numpy as np
 from sympy import factor
 
-os.chdir("D:/WHCR_2025/12_WHCR_detection/")
+os.chdir("C:/BP/test_ai/")
 
 # Inputs: csv_file= input of csv with annotation data;
 # export_json= name of COCO json to export
 # width = width of images (pixels), height = height of images (pixels)
 # categories = link the name of classes related to its index
-csv_file = '5_tile_annot_5perc_empty_train.csv'
-export_json = '5_tile_annot_5perc_empty_train.json'
-width = 1024
-height = 1024
+csv_file = 'annot_parents2.csv'
+export_json = 'annot_parents.json'
+width = 6464
+height = 4848
 
 csv_data = pd.read_csv(csv_file)
 print(csv_data)
 
-categories = [{"label_id": 0, "name": "whcr"}]
+categories = [{"label_id": 0, "name": "bird"}]
 
 #csv_data.columns = (['id','image_id','unique_image_jpg','xmin', 'ymin', 'w','h','label_id'])
 
