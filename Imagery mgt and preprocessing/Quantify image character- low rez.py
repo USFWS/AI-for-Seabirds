@@ -6,9 +6,9 @@ import pandas as pd
 from skimage.feature import graycomatrix, graycoprops
 
 # Input: files = directory of images, export_csv = csv that reports brightness, contrast for each image
-files = glob.glob("C:/BP/Annotation_analysis/cvat_images_good/*.jpg")
+files = glob.glob("D:/LA_islands_2026/JPG_2026_Mar_Breton_study/*.jpg")
 
-export_csv = "C:/BP/Annotation_analysis/new_character.csv"
+export_csv = "D:/LA_islands_2026/image_char_2026_Mar.csv"
 
 # orig pixels= 6464 * 4848
 # Input desired pixel dimensions; e.g., 1/16 size of orig pixels
