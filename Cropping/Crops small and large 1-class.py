@@ -4,14 +4,14 @@ import os
 
 ##Input: image_path = dir with parent images; csv_data = detection csv from inference
 # export_path_[bird/nonbird/artif] = specify folders for each class
-image_path = "D:/WHCR_2025/1_parent_images/JPG_20250122_095400/"
-csv_data = pandas.read_csv("D:/WHCR_2025/12_WHCR_detection/g_inference/yolov11s_Aug3_095400.csv")
+image_path = "D:/2025/1_parent_images/JPG_20250122_095400/"
+csv_data = pandas.read_csv("D:/2025/12_detection/g_inference/yolov11s_Aug3_095400.csv")
 
 # crops with context exports
-export_path_bird = "D:/WHCR_2025/12_WHCR_detection/g_inference/crops_context_095400/"
+export_path_bird = "D:/2025/12_detection/g_inference/crops_context_095400/"
 
 # crops for inference
-export_path_bird_i = "D:/WHCR_2025/12_WHCR_detection/g_inference/crops_095400/"
+export_path_bird_i = "D:/2025/12_detection/g_inference/crops_095400/"
 
 if not os.path.exists(export_path_bird):
     os.mkdir(export_path_bird)
