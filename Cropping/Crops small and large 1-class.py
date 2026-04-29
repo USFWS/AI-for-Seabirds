@@ -2,33 +2,31 @@ import pandas
 import cv2 as cv
 import os
 
-##Input: image_path = dir with parent images; csv_data = detection csv from inference
-# export_path_[bird/nonbird/artif] = specify folders for each class
-image_path = "D:/2025/1_parent_images/JPG_20250122_095400/"
+##Inputs: 
+# source_path = dir with parent images
+# csv_data = detection model results in csv
+# export_path_context = export directory for crops with context 
+# export_path_small = export directory for small crops 
+
+source_path = "D:/2025/1_parent_images/JPG_20250122_095400/"
 csv_data = pandas.read_csv("D:/2025/12_detection/g_inference/yolov11s_Aug3_095400.csv")
+export_path_context = "D:/2025/12_detection/g_inference/crops_context_095400/"
+export_path_small = "D:/2025/12_detection/g_inference/crops_095400/"
 
-# crops with context exports
-export_path_bird = "D:/2025/12_detection/g_inference/crops_context_095400/"
-
-# crops for inference
-export_path_bird_i = "D:/2025/12_detection/g_inference/crops_095400/"
-
-if not os.path.exists(export_path_bird):
-    os.mkdir(export_path_bird)
-if not os.path.exists(export_path_bird_i):
-    os.mkdir(export_path_bird_i)
-
+if not os.path.exists(export_path_context):
+    os.mkdir(export_path_context)
+if not os.path.exists(export_path_small):
+    os.mkdir(export_path_small)
 
 #csv_data.columns = (['unique_image_jpg', 'class', 'score', 'xmin', 'ymin', 'w', 'h', 'unique_BB'])
-# print(csv_data)
 
-dirs = os.listdir(image_path)  # get all files in folder
+dirs = os.listdir(source_path)  # get all files in folder
 print("image path: ", len(dirs))
 
 # Get all of the image names without the path
 file_list = []
 for file in dirs:
-    basename = os.path.splitext(file)[0] + ".jpg"  # take basename (not path) and add .jpg
+    basename = os.path.splitext(file)[0] # + ".jpg"  # take basename (not path) and add .jpg
    # print(basename)
     file_list.append(basename)
 
@@ -36,7 +34,7 @@ matches = csv_data[csv_data['unique_image_jpg'].isin(file_list)]
 print("matches with csv: ", len(matches))
 
 for index, row in matches.iterrows():  ## iterrows: Pandas iterate over rows
-    source_path = image_path + row['unique_image_jpg']  # +'.jpg'
+    source_path = source_path + row['unique_image_jpg']  # +'.jpg'
     print("Source path: ", source_path)
     temp1 = cv.imread(source_path, cv.IMREAD_COLOR)  # this is good
 
@@ -65,9 +63,9 @@ for index, row in matches.iterrows():  ## iterrows: Pandas iterate over rows
     # (x, y starting points), (x,y end points)
     cv.rectangle(temp1, (xmin_box, ymin_box), (xmax_box, ymax_box), (0, 255, 0))
 
-    export_path = export_path_bird
+    export_path = export_path_context
     crops = temp1[y:(y + h), x:(x + w)]
-    name = export_path_bird + row['unique_BB'] + ".jpg"
+    name = export_path_context + row['unique_BB'] + ".jpg"
     print ("dest1", name)
 
   #  cv.imwrite(name, crops, [int(cv.IMWRITE_JPEG_QUALITY), 95])
@@ -92,7 +90,7 @@ for index, row in matches.iterrows():  ## iterrows: Pandas iterate over rows
 
     # Specify each class name below (cat1, cat2, etc.)
 
-    export_path = export_path_bird_i
+    export_path = export_path_small
     crops = temp2[y:(y + h), x:(x + w)]
     name2 = row['unique_BB'] + ".jpg"
     print("dest2", name2)
