@@ -4,14 +4,19 @@ from pycocotools.coco import COCO
 from pascal_voc_writer import Writer
 import os
 
-os.chdir("C:/BP/species/")
+import config
 
-# Inputs: csv_file= input of csv with annotation data;
+os.chdir("C:/users/bpickens/OneDrive - DOI/species_OneDrive/detection/")
+
+# Inputs:
+# csv_file= input of csv with annotation data;
 # export_json= name of COCO json to export
+# output_dir = dir for voc annotations
 # width = width of images (pixels), height = height of images (pixels)
 # categories = link the name of classes related to its index
-csv_file = 'new_test_annot.csv'
-export_json = 'new_test_annot.json'
+csv_file = config.CSV_DATA
+json_output = config.JSON_OUTPUT
+export_dir = config.EXPORT_DIR
 width = 6464
 height = 4848
 
@@ -36,6 +41,7 @@ image_id1 = pd.unique(csv_data['unique_image_jpg'])
 csv_data['image_id'], unique_labels = csv_data['unique_image_jpg'].factorize()
 csv_data['image_id']= csv_data['image_id'].astype(int)
 csv_data['id']= csv_data['id'].astype(int)
+#pd.DataFrame.to_csv(csv_data, path_or_buf= "C:/BP/species/tester.csv")
 csv_data['annid'] = csv_data.index
 
 # Create lists to fill in, including nested dictionaries
@@ -82,11 +88,10 @@ data_coco["images"] = images2
 data_coco["categories"] = categories
 data_coco["annotations"] = annotations
 
-json.dump(data_coco, open(export_json,"w"), indent=0)
+json.dump(data_coco, open(json_output, "w"), indent=0)
 print ("Completed!")
 
 ##########
-###
 
 def coco2voc(ann_file, output_dir):
     coco = COCO(ann_file)
@@ -118,5 +123,5 @@ def coco2voc(ann_file, output_dir):
                 basename = os.path.basename(label_fname)
                 print("basename:", basename)
                 writer.save(output_dir+'/'+ basename)
-output_dir = 'C:/BP/species/parent_voc/'
-coco2voc(ann_file=export_json, output_dir= output_dir)
+
+coco2voc(ann_file=json_output, output_dir= export_dir)

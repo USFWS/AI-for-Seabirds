@@ -2,14 +2,14 @@ import xml.etree.ElementTree as ET
 import os
 import json
 import pandas as pd
-
+import config
 
 # xml_path = path to voc annotations
-xml_path = "D:/WHCR_2025/12_WHCR_detection/5_tiles_voc_5perc_empty/"
-json_file = "D:/WHCR_2025/12_WHCR_detection/5_tiles_temp7.json"
+xml_path = "D:/species_2025/12_species_detection/5_tiles_voc_5perc_empty/"
+json_output = config.JSON_OUTPUT
 
-final_csv = "D:/WHCR_2025/12_WHCR_detection/3_tile_annot_5perc_empty.csv"
-filename = json_file
+new_csv = config.NEW_CSV
+filename = json_output
 
 #l1 = os.listdir(xml_path)
 #print(l1)
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     print("LKJL")
  #   xml_path = 'Annotations'
     parseXmlFiles(xml_path)
-    json.dump(coco, open(json_file, 'w'))
+    json.dump(coco, open(json_output, 'w'))
 
 
 ### STEP 1- EXPORT ANNOTATION DATA
@@ -258,4 +258,4 @@ csv_data = pd.read_csv(csv_data)
 # Merge
 merge1 = csv_data.merge(csv_names, left_on= 'image_id', right_on = 'image_id' )
 print (merge1)
-merge1.to_csv(final_csv, index=False)
+merge1.to_csv(new_csv, index=False)

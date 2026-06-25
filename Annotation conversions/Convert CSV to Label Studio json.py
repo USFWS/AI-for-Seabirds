@@ -4,6 +4,7 @@ import label_studio_sdk.converter.imports.coco
 import pandas as pd
 import json
 from label_studio_sdk import converter
+import config
 
 ## Inputs: csv_file = csv with annotation data; Please see csv_data.columns below and the Label-studio
 # csv template in the github folder for specifications
@@ -12,10 +13,10 @@ from label_studio_sdk import converter
 # config = name of label studio config file to export; can be used as labeling interface
 # image_width, image_height
 
-csv_file = "D:/SACR/SACR_FIX/2025_annot_preds_June23.csv"
+csv_file = config.CSV_DATA
 categories = [{"id":0, "name": "sandhill_crane"}]
 
-output_file = "D:/SACR/SACR_FIX/2025_annot_preds_June23_LS.json"
+json_output = config.JSON_OUTPUT
 #config = "C:/Users/name/Desktop/SACR_detection/YOLO8_SACR_mixed_train_March14_LS_config_temp.xml"
 image_width = 736
 image_height = 736

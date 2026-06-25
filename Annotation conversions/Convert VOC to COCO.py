@@ -1,7 +1,7 @@
+import config
 
-
-xml_path = 'D:/WHCR_2025/12_WHCR_detection/5_tiles_voc_5perc_empty/'
-json_file = 'D:/WHCR_2025/12_WHCR_detection/new.json'
+xml_path = 'D:/species_2025/12_species_detection/5_tiles_voc_5perc_empty/'
+json_output = config.JSON_OUTPUT
 
 import xml.etree.ElementTree as ET
 import os
@@ -183,4 +183,4 @@ if __name__ == '__main__':
     print("LKJL")
  #   xml_path = 'Annotations'
     parseXmlFiles(xml_path)
-    json.dump(coco, open(json_file, 'w'))
+    json.dump(coco, open(json_output, 'w'))

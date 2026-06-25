@@ -4,13 +4,17 @@ import json
 from tqdm import tqdm
 import shutil
 
+import config
+
 # xml_path = path to voc annotations
 # json_file = temp file to export
 # new_yolo = final yolo path
-xml_path = "C:/BP/species/new_test_annot/"
-json_file = "C:/BP/seabirds/temp1.json"
-new_yolo = "C:/BP/seabirds/new_test_yolo/"
-filename = json_file
+xml_path = "C:/users/bpickens/OneDrive - DOI/species_OneDrive/detection/new_train_annot/"
+json_output = config.JSON_OUTPUT
+yolo_output_dir = config.YOLO_OUTPUT_DIR
+
+#temp_csv = "C:/BP/species/temp_csv1.csv"
+filename = json_output
 
 #l1 = os.listdir(xml_path)
 #print(l1)
@@ -184,7 +188,7 @@ if __name__ == '__main__':
     print("LKJL")
  #   xml_path = 'Annotations'
     parseXmlFiles(xml_path)
-    json.dump(coco, open(json_file, 'w'))
+    json.dump(coco, open(json_output, 'w'))
 
 ##########
 # Built from a foundation based on: https://gist.github.com/iagorrr ; Thank you!
@@ -265,5 +269,4 @@ def convert_coco_json_to_yolo_txt(output_path, json_file):
     print("Converting COCO Json to YOLO txt finished!")
 
 # Inputs: (directory for yolo outputs, coco json input file)
-convert_coco_json_to_yolo_txt(new_yolo,json_file)
-
+convert_coco_json_to_yolo_txt(yolo_output_dir, json_output)

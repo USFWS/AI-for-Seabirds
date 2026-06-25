@@ -1,17 +1,15 @@
 import os
 import pandas as pd
 import json
-
+import config
 # Inputs: working_dir= working directory, filename = name of coco json file that needs converted ;
 # final_csv = output csv file
 # The output csv will not contain images without annotations; to obtain those, please check the output of
 # "...names_toCSV" file
 
-working_dir = "D:/WHCR_2025/13_WHCR_detect_classify/"
-filename = "result.json"
-final_csv = "new_whcr_annot.csv"
-
-#"D:/R2_WHCR_2025/6_whcr_active_learn_from_bird_May20.json"
+working_dir = config.WORKING_DIR
+json_input = config.JSON_INPUT
+new_csv = config.NEW_CSV
 
 # Set working directory
 os.chdir(working_dir)
@@ -55,8 +53,8 @@ def convert_coco_json_to_csv(filename):
 
 ## STEP 2- EXPORT CSV WITH IMAGE NAMES, IMAGE ID NUMBERS
 def convert_coco_names_to_csv(csv_file):
-    s = json.load(open(filename, 'r'))  # read & parse JSON string and convert it to a Python Dictionary
-    out_file = filename[:-5]
+    s = json.load(open(json_input, 'r'))  # read & parse JSON string and convert it to a Python Dictionary
+    out_file = json_input[:-5]
     out2 = open(out_file + '_names_toCSV.csv', 'w')  # open for writing to file
     out2.write('image_id, unique_image_jpg \n')  #
 
@@ -71,11 +69,11 @@ def convert_coco_names_to_csv(csv_file):
         out2.write('{},{} \n'.format(id, unique_image_jpg))
 
 # Run functions to get 2 csv files
-convert_coco_json_to_csv(filename)
-convert_coco_names_to_csv(filename)
+convert_coco_json_to_csv(json_input)
+convert_coco_names_to_csv(json_input)
 
 # Read in; 1st, Erase extra image names at end of "data to csv" file
-prefix = filename[:-5]
+prefix = json_input[:-5]
 csv_names= ("".join([prefix,"_names_toCSV.csv"]))
 csv_data = ("".join([prefix,"_json_data_to_CSV.csv"]))
 
@@ -85,4 +83,4 @@ csv_data = pd.read_csv(csv_data)
 # Merge
 merge1 = csv_data.merge(csv_names, left_on= 'image_id', right_on = 'image_id' )
 #print (merge1)
-merge1.to_csv(final_csv, index=False)
+merge1.to_csv(new_csv, index=False)

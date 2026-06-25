@@ -10,7 +10,7 @@ import tensorrt
     #NCNN (.param or _ncnn_model/), and TorchScript (.torchscript) models.
     #"""
 
-model_path = "E:/WHCR_2025/whcr_detector_yolo11s_Aug3.pt"
+model_path = "D:/whcr_detector_v5_yolo11s_conf15_iou30_22April2026_reverse.pt"
 # Load the latest YOLO26 model
 model = YOLO(model_path)
 
@@ -19,6 +19,3 @@ model = YOLO(model_path)
 model.export(format= "onnx", half=True)
 model.export(format= "engine", half=True)
 model.export(format= "openvino", half=True)
-
-
-

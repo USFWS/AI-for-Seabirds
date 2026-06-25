@@ -5,24 +5,24 @@ from pycocotools.coco import COCO
 from pascal_voc_writer import Writer
 import argparse
 import os
+import config
 
 # Inputs
 ## ann_file = COCO annotation json
 ## output_dir = directory for output PASCAL Voc annotations
-ann_file = "C:/BP/test_ai/annot_parents.json"
-output_dir = "C:/BP/test_ai/annot_parents/annot_parent_voc/"
+#ann_file = "D:/2025/detection/3_coco.json"
+#output_dir = "D:/2025/detection/3_annot_voc/"
+
+ann_file = "C:/BP/species/annot_tester.json"
+export_dir = config.EXPORT_DIR
 
 def coco2voc(ann_file, output_dir):
     coco = COCO(ann_file)
-    print("shhh")
     # cats = class categories
     cats = coco.loadCats(coco.getCatIds())
     cat_idx = {}
-    print("okay1")
     for c in cats:
         cat_idx[c['id']] = c['name']
-
-    print("okay2")
     for img in coco.imgs:
         catIds = coco.getCatIds()
         annIds = coco.getAnnIds(imgIds=[img], catIds=catIds)
@@ -47,4 +47,4 @@ def coco2voc(ann_file, output_dir):
                 print("basename:", basename)
                 writer.save(output_dir+'/'+ basename)
 
-coco2voc(ann_file = ann_file, output_dir = output_dir)
+coco2voc(ann_file=ann_file, output_dir= export_dir)

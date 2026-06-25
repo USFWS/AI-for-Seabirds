@@ -5,33 +5,43 @@ import csv
 import numpy as np
 from sympy import factor
 
-os.chdir("C:/BP/test_ai/")
+import config
+
+os.chdir("D:/2025/detection/")
 
 # Inputs: csv_file= input of csv with annotation data;
 # export_json= name of COCO json to export
 # width = width of images (pixels), height = height of images (pixels)
 # categories = link the name of classes related to its index
-csv_file = 'annot_parents2.csv'
-export_json = 'annot_parents.json'
-width = 6464
-height = 4848
+csv_file = config.CSV_DATA
+export_json = config.JSON_OUTPUT
+width = 1024
+height = 1024
 
 csv_data = pd.read_csv(csv_file)
 print(csv_data)
 
-categories = [{"label_id": 0, "name": "bird"}]
+categories = [{"label_id": 0, "name": "species"}]
 
 #csv_data.columns = (['id','image_id','unique_image_jpg','xmin', 'ymin', 'w','h','label_id'])
 
-#csv_data['image_id']= csv_data['image_id'].astype(int)
-#csv_data['id']= csv_data['id'].astype(int)
-#csv_data['xmin']= csv_data['xmin'].astype(int)
-#csv_data['ymin']= csv_data['ymin'].astype(int)
-#csv_data['w']= csv_data['w'].astype(int)
-#csv_data['h']= csv_data['h'].astype(int)
-#csv_data['label_id']= csv_data['h'].astype(int)
- #                    'bbname','unique_image_path'])
 csv_data['annid'] = csv_data.index
+
+len1 = len(csv_data)
+print(len1)
+
+# create id for each label
+id_list1 = []
+for i in range(len1):
+    id_list1.append(i)
+csv_data['id'] = id_list1
+
+# finds all unique images and maps to integer
+image_id1 = pd.unique(csv_data['unique_image_jpg'])
+csv_data['image_id'], unique_labels = csv_data['unique_image_jpg'].factorize()
+csv_data['image_id']= csv_data['image_id'].astype(int)
+
+csv_data['id']= csv_data['id'].astype(int)
 
 # Create lists to fill in, including nested dictionaries
 images = []
@@ -45,7 +55,6 @@ def image(row):
     image["file_name"] = row.unique_image_jpg
   # image["observer"] = row.author # if needed
     return image
-
 def annotation(row):
     annotation = {}
     annotation["id"] = row.id

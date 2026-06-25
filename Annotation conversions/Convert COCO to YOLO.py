@@ -79,5 +79,5 @@ def convert_coco_json_to_yolo_txt(output_path, json_file):
     print("Converting COCO Json to YOLO txt finished!")
 
 # Inputs: (directory for yolo outputs, coco json input file)
-convert_coco_json_to_yolo_txt("D:/WHCR_2025/12_WHCR_detection/6_dataset_July30/train/labels/",
-                            "D:/WHCR_2025/12_WHCR_detection/6_tile_annot_5perc_empty_train.json")
+convert_coco_json_to_yolo_txt("D:/2025/detection/6_dataset_July30/train/labels/",
+                            "D:/2025/detection/6_tile_annot_5perc_empty_train.json")
