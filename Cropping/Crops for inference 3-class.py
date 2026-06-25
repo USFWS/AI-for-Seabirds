@@ -2,21 +2,20 @@ import pandas
 import cv2 as cv
 import os
 
+import config
+
 ##Input: path = dir with parent images; csv_data = detection csv from inference
 # export_path_[bird/nonbird/artif] = specify folders for each class
-image_path = "D:/R2_models/new_parents_June4/"
-csv_data = pandas.read_csv("D:/R2_models/new_data_June4_crops.csv")
+source_img = config.SOURCE_IMG
+csv_data = pandas.read_csv(config.CSV_DATA)
 
 # export_path_bird = "D:/detection_crops_for_inference_2024/2024_Jan5_bird_crops/"
-
 if not os.path.exists(export_path_nonbird):
     os.mkdir(export_path_nonbird)
 
-
 #csv_data.columns = (['class', 'score', 'xmin', 'ymin', 'w', 'h', 'unique_image_jpg', 'unique_BB'])
-#print(csv_data)
 
-dirs = os.listdir(image_path)  # get all files in folder
+dirs = os.listdir(source_img)  # get all files in folder
 print(len(dirs))
 
 # Get all of the image names without the path
@@ -30,7 +29,7 @@ matches = csv_data[csv_data['unique_image_jpg'].isin(file_list)]
 print("Matches: ", len(matches))
 
 for index, row in matches.iterrows():  ## iterrows: Pandas iterate over rows
-    source_path = image_path + row['unique_image_jpg']  # +'.jpg'
+    source_path = source_img + row['unique_image_jpg']  # +'.jpg'
     print("Source: ", source_path)
     temp1 = cv.imread(source_path, cv.IMREAD_COLOR)  # this is good
 

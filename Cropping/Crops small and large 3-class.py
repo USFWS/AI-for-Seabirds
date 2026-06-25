@@ -2,23 +2,25 @@ import pandas
 import cv2 as cv
 import os
 
+import config
+
 ##Input: image_path = dir with parent images;
 # csv_data = detection csv from inference
 # root_export = directory for exporting crops
 # export_path_[bird/nonbird/artif] = specify folders for each class
-image_path = "C:/users/aware/desktop/hive_batch4/Hive_land_parents/"
-csv_data = pandas.read_csv("C:/users/aware/desktop/hive_batch4/hive_batch4_annot_land.csv")
-root_export = "C:/users/aware/desktop/hive_batch4/land_crops/"
+image_path = config.SOURCE_IMG
+csv_data = pandas.read_csv(config.CSV_DATA)
+export_dir = config.EXPORT_DIR
 
 # crops with context exports
-export_path_bird = root_export + "birds_crops_w_context/"
-export_path_nonbird = root_export + "nonavian_w_context/"
-export_path_artif = root_export + "artif_w_context/"
+export_path_bird = export_dir + "birds_crops_w_context/"
+export_path_nonbird = export_dir + "nonavian_w_context/"
+export_path_artif = export_dir + "artif_w_context/"
 
 # crops for inference
-export_path_bird_i = root_export + "infer_crops_birds/"
-export_path_nonbird_i = root_export + "infer_crops_nonavian/"
-export_path_artif_i = root_export + "infer_crops_artif/"
+export_path_bird_i = export_dir + "infer_crops_birds/"
+export_path_nonbird_i = export_dir + "infer_crops_nonavian/"
+export_path_artif_i = export_dir + "infer_crops_artif/"
 
 if not os.path.exists(export_path_bird):
     os.mkdir(export_path_bird)
