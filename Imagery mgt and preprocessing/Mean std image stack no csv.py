@@ -6,6 +6,9 @@ from tqdm.auto import tqdm
 import torch.utils.data
 from torchvision import transforms
 import torch
+
+import config
+
 torch.set_printoptions (edgeitems=2)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -16,7 +19,7 @@ if device:
     print(torch.cuda.get_device_name())
 
 # Inputs
-image_folder = "D:/SACR/SACR_FIX/old_model_2023_images_gr5_cranes/"
+source_img = config.SOURCE_IMG
 
 # To tensor, normalize based on our data
 transform1 = transforms.Compose([
@@ -24,7 +27,7 @@ transform1 = transforms.Compose([
 ])
 
 # Create train dataset
-train_dataset = (image_folder == image_folder, transform= transform1)
+train_dataset = (source_img == source_img, transform= transform1)
 
 len(train_dataset)
 
@@ -36,6 +39,3 @@ stack1.shape
 x = stack1.view(1,-1).mean(dim=1)
 y = stack1.view(1,-1).std (dim=1)
 print(x, y)
-
-
-

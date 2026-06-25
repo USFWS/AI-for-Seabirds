@@ -6,6 +6,9 @@ from tqdm.auto import tqdm
 import torch.utils.data
 from torchvision import transforms
 import torch
+
+import config
+
 torch.set_printoptions (edgeitems=2)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -17,7 +20,7 @@ if device:
 
 # Inputs
 csv_train = "D:/SACR_models/2023_sacr/two_step_dataset/train_export.csv"
-image_folder = "D:/SACR_models/2023_sacr/two_step_dataset/all_crops/"
+source_img = config.SOURCE_IMG
 
 class CustomDataset(torch.utils.data.Dataset):  ## used for custom data loading
     def __init__(self, csv_path, image_folder, transform):
@@ -44,7 +47,7 @@ transform1 = transforms.Compose([
 ])
 
 # Create train dataset
-train_dataset = CustomDataset(csv_path = csv_train, image_folder = image_folder, transform= transform1)
+train_dataset = CustomDataset(csv_path = csv_train, image_folder = source_img, transform= transform1)
 
 len(train_dataset)
 
@@ -56,6 +59,3 @@ stack1.shape
 x = stack1.view(1,-1).mean(dim=1)
 y = stack1.view(1,-1).std (dim=1)
 print(x, y)
-
-
-
