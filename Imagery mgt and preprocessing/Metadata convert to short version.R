@@ -2,14 +2,13 @@
 library(dplyr)
 
 # Set directory                         
-setwd(file.path('C:', 'Users', 'bpickens','Desktop', 
-                'Seabird_workflow', 'Metadata_images_cumulative'))
+setwd(file.path('C:', 'Users', 'bpickens','OneDrive - DOI', 'Seabird_workflow', 'Metadata_images_cumulative'))
 
 # Input metadata to shorten
-data1 <- read.table ("2021_2024_metadata.csv",sep = ",",header=TRUE, fill=TRUE)
+data1 <- read.table ("2025_image_metadata_update_Aug2025.csv",sep = ",",header=TRUE, fill=TRUE)
 
 # name of output csv
-output_csv <- "2021_2024_metadata_short2.csv"
+output_csv <- "2025_metadata_short_update_Aug2025.csv"
 
 # Methods to shorten
 data1$flight_name <- NULL
@@ -37,16 +36,17 @@ data1$flight_line <- NULL
 data1$unique_image_jpg <- paste(data1$unique_image,".jpg", sep = "")
 data1$unique_image_jpg
 
-write.table(data3, output_csv, sep=",", row.names=FALSE)
+write.table(data1, output_csv, sep=",", row.names=FALSE)
 
 #################################
 ### Combine short metadata
 
-#data1 <- read.table ("2021_2024_metadata_short.csv",sep = ",",header=TRUE, fill=TRUE)
-#data2 <- read.table ("2022_2023_metadata_short.csv",sep = ",",header=TRUE, fill=TRUE)
+data1 <- read.table ("2021_2024_image_metadata_corrected_short_v6.csv",sep = ",",header=TRUE, fill=TRUE)
 
-#data3 <- rbind(data1, data2)
+data2 <- read.table ("2025_metadata_short_update_Aug2025.csv",sep = ",",header=TRUE, fill=TRUE)
 
-#write.table(data3, "2021_2024_metadata_short.csv", sep=",", row.names=FALSE)
+data3 <- rbind(data1, data2)
+
+write.table(data3, "2021_2025_image_metadata_short_v7.csv", sep=",", row.names=FALSE)
 
 

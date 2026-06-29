@@ -9,12 +9,9 @@ import config
 # Data inputs:
 # csv data= list of images to be copied/moved (column header of 'unique_image_jpg')
 # source_img = directory of images to search
-# dest1 = destination folder to move/copy images into
-
+# export_dir = destination folder to move/copy images into
 source_img = config.SOURCE_IMG
-
 csv_data = pd.read_csv(config.CSV_DATA)
-
 export_dir = config.EXPORT_DIR
 
 if not os.path.exists(export_dir):

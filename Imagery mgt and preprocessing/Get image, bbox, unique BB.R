@@ -3,12 +3,14 @@ library(dplyr)
 library(stringr)
 library(tidyverse)
 
-setwd(file.path('C:', 'users', 'aware', 'desktop',
-                'whcr_results'))
+#setwd(file.path('C:', 'users', 'aware', 'desktop',
+ #               'whcr_results'))
+
+setwd(file.path('c:', 'Users', 'bpickens','OneDrive - DOI', 'Seabird_species_classify'))
 
 ###### Get parent image names and coordinates
 ## be sure to remove rows that have non-jpg crop names
-data1<- read.table("YOLO_to_format.csv", sep=",", header=TRUE)
+data1<- read.table("aws_Jan2026_v4.csv", sep=",", header=TRUE)
 
 names(data1)
 View(data1)
