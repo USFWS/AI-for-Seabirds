@@ -6,7 +6,7 @@ import os
 
 import config
 
-os.chdir("C:/users/bpickens/OneDrive - DOI/species_OneDrive/detection/")
+os.chdir("D:/seabird_detection/")
 
 # Inputs:
 # csv_file= input of csv with annotation data;
@@ -18,12 +18,12 @@ csv_file = config.CSV_DATA
 json_output = config.JSON_OUTPUT
 export_dir = config.EXPORT_DIR
 width = 6464
-height = 4848
+height = 4852
 
 csv_data = pd.read_csv(csv_file)
 
 categories = [
-    {"id": 0, "name": "species"}]
+    {"id": 0, "name": "bird"}]
 
 #csv_data.columns = (['id','image_id','unique_image_jpg','xmin', 'ymin', 'w','h','label_id'])
 #csv_data['label_id']= csv_data['label_id'].astype(int)
