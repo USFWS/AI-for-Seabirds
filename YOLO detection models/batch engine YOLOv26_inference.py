@@ -11,17 +11,16 @@ from ultralytics import YOLO
 import config
 
 # Inputs:
-# source_img = folder with images;
-# new_csv = detection csv to output
-# visual_path = if visuals specified
-# model_path = path to YOLOv8 weights file
-# from torch import init_num_threads
+# source_img = folder with images; new_csv = detection csv to output
+# visual_path = if visuals specified; model_path = path to YOLOv8 weights file
 # project name where results are expected; will end in /exp/ when created
 source_img = config.SOURCE_IMG
 new_csv = config.NEW_CSV
 # visual_path = config.VISUAL_PATH
 model_path = config.MODEL_PATH
+
 project_name = config.PROJECT_NAME
+visual_path = config.VISUAL_PATH
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
@@ -32,8 +31,8 @@ torch.backends.cudnn.benchmark = True
 time_start = time.time()
 yolo_model = YOLO(model_path, task= 'detect')
 
-#if not os.path.exists(visual_path):
- #   os.mkdir(visual_path)
+if not os.path.exists(visual_path):
+   os.mkdir(visual_path)
 
 detection_model = AutoDetectionModel.from_pretrained(
     model_type='ultralytics',
@@ -57,21 +56,22 @@ print("Warmup done.")
 result = sahi.predict.predict(
     detection_model=detection_model,
     model_type='ultralytics',
-    model_confidence_threshold=0.15,
+    model_confidence_threshold=0.20,
     slice_height=1024,
     slice_width=1024,
     no_standard_prediction=True,
     no_sliced_prediction=False,
-    overlap_height_ratio=0.1,
-    overlap_width_ratio=0.1,
+    overlap_height_ratio=0.0,
+    overlap_width_ratio=0.0,
     model_device= device,
     source=source_img,
     export_crop=False,
     export_pickle=True,
-    novisual=True,
+    novisual= False,
     verbose = 0, # 1 or 2
-    project = project_name
-   # "E:/WHCR_2025/detection/demo_results/"
+    project = project_name,
+	visual_hide_conf=True,
+	visual_bbox_thickness=1
 )
 ## Duration tracking
 torch.cuda.synchronize()

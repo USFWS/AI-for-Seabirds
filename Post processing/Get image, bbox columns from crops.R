@@ -3,17 +3,16 @@ library(dplyr)
 library(stringr)
 library(tidyverse)
 
-setwd(file.path('D:', 'WHCR_2025', '12_WHCR_detection', 'g_inference',
-                'crops_131500', 'classify_test_data'))
+setwd(file.path('C:', 'BP', 'annot_processing', 'new_annotations'))
 
 ###### Get parent image names and coordinates
 ## be sure to remove rows that have non-jpg crop names
-data1<- read.table("classify_test_data.csv", sep=",", header=TRUE)
+data1<- read.table("new_seabirds_double4.csv", sep=",", header=TRUE)
 
 names(data1)
 View(data1)
 
-data1$basename <- basename(data1$unique_image_jpg)
+data1$basename <- basename(data1$unique_BB)
 data1$basename = substr(data1$basename,1,nchar(data1$basename)-4)
 data1$basename
 
@@ -36,4 +35,4 @@ data1$c6 <- NULL
 
 View(data1)
 
-write.table(data1, "classify_birds1.csv", sep =",", row.names=FALSE)
+write.table(data1, "mica_2026_new.csv", sep =",", row.names=FALSE)

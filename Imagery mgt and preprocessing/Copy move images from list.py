@@ -18,7 +18,7 @@ if not os.path.exists(export_dir):
     os.mkdir(export_dir)
 
 ##if jpg is needed run this:
-csv_data['unique_image_jpg'] = csv_data['unique_image_jpg'] #+ ".png"
+#csv_data['unique_imge_jpg'] = csv_data['unique_imge_jpg'] #+ ".png"
 
 x = 0
 

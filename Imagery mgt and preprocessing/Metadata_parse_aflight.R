@@ -1,6 +1,6 @@
 
 library (xml2)
-library (XML)
+#library (XML)
 library (tidyr)
 library (dplyr)
 library (filenamer)
@@ -12,10 +12,10 @@ library (lubridate)
 
 # Enter your directory
 #setwd(file.path('C:', 'Users', 'bpickens', 'OneDrive - DOI', 'Desktop', 'Seabird_workflow'))##
-setwd(file.path('C:', 'Brad', 'aflights_new'))##
+setwd(file.path('E:', 'aflights'))##
 
 # Input: file name
-input1 <- "20250826_124700.aflight"
+input1 <- "20260713_160300.aflight"
 
 # WGS1984 projection for shapefile
 crs1 <- 4326

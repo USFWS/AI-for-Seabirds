@@ -11,13 +11,14 @@ import glob
 # tile size = size in pixels
 # overlap = overlap in tiles
 
-output_folder= "C:/BP/test_ai/tiles"
-source_dir = glob.glob("C:/BP/test_ai/parents/*.jpg")
+output_folder= "D:/seabird_detection/empty_tiles/"
+source_dir = glob.glob("D:/seabird_detection/img_empty_background2/*.jpg")
 
 tile_size = 1024
 overlap = 0
 
-def tile_img(image_path, output_folder,tile_size=800, overlap=200, output_widget=None, zip_output=None):
+def tile_img(image_path, output_folder,tile_size, overlap, output_widget=None,
+             zip_output=None):
     """
     Crops an image into square tiles of specified size with overlap and saves them to an output folder.
 

@@ -21,3 +21,9 @@ po/*~
 README.html
 DISCLAIMER.html
 NEWS.html
+/config.py
+/YOLO detection models/yolo11n.pt
+/YOLO detection models/yolo11s.pt
+/YOLO detection models/yolo26m.pt
+/YOLO detection models/yolo26n.pt
+/YOLO detection models/yolo26s.pt
