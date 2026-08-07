@@ -15,23 +15,34 @@
 
 from ultralytics import YOLO
 import torch
+import time
+
 torch.backends.cudnn.enabled=True
-device = "cuda:2" if torch.cuda.is_available() else "cpu"
+
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
 # TRAIN A MODEL
-# dataset download directory can be updated in 'C:\Users\aware\AppData\Roaming\Ultralytics\settings.json'
+# dataset download directory can be updated in
+# 'C:\Users\user\AppData\Roaming\Ultralytics\settings.json'
 
-model = YOLO("yolo11m.pt")
-model.info()
+time_start = time.time()
 
-results = model.train(data="D:/species_2025/12_species_detection/7_opt.yaml",
-                      batch=12, iou = 0.20,
-                      task="detect", epochs=70, imgsz=1024, patience=0,
-                      device=2, max_det=20, lr0=0.001, conf=0.20,
-                      cache="False",
-                      project="D:/species_2025/12_species_detection/f_model_results/",
-                      name="YOLO11m_conf20_Aug3", amp= True, workers=0)
+def main():
+    model = YOLO("yolo26n.pt")
+    model.info()
 
-# Load model for inference, then
-# model.export(format = "onnx")
+    ## change to batch = -1
+    # fastest -- cache = 'ram' , cache = 'disk', cache = False (slowest)
+    results = model.train(data="C:/BP/seabird_detection/DATASETS_results/seabird_detect.yaml",
+                          batch= 2, #-1 to use suggestion
+                          task="detect", epochs=100, # 100-300 epochs
+                          imgsz=1024, patience=15, # typical patience 20-30
+                          device= device, max_det=200,workers= 20,
+                          cache= "disk", # can be false
+                          optimizer= "SGD", lr0 = 0.1, momentum=0.937,
+                          name="YOLO26n",
+                          project="C:/BP/seabird_detection/DATASETS_results/yolo26n_july9/",
+                          amp= True)
+if __name__ == "__main__":
+    main()

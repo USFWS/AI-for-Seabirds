@@ -15,26 +15,27 @@
 
 from ultralytics import YOLO
 import torch
+import time
+
 torch.backends.cudnn.enabled=True
-device = "cuda:1" if torch.cuda.is_available() else "cpu"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
 # Input yaml file
-yaml_path = "C:/BP/test_ai/opt.yaml"
-
+yaml_path = "D:/seabird_detection/DATASETS_results/seabird_detect.yaml"
 # TRAIN A MODEL YOLOv26 model
 # YOLO options:
 # Load a model
-model = YOLO("yolo26n.pt")  # load a pretrained model (recommended for training)
+model = YOLO("yolo26s.pt")  # load a pretrained model (recommended for training)
 # model = YOLO("yolo26n.yaml").load("yolo26n.pt")  # build from YAML and transfer weights
 model.info()
 
 # Train the model
 results = model.train(data= yaml_path,
-                      batch=8, iou = 0.20,
-                      task="detect", epochs=3, imgsz=1024, patience=0,
-                      device=device, max_det=5000, lr0=0.01, conf=0.70,
-                      cache="False",
-                      project="C:/BP/test/test1/",
-                      name="yolov26_conf_0_70")
-
+                      batch=4, optimizer = "SGD",
+                      epochs = 120,
+                      task="detect", imgsz=1024, patience=15,
+                      device=device, max_det=100, lr0=0.1,
+                      cache="disk", workers = 18,
+                      project="C:/BP/seabird_yolo_s_/",
+                      name="yolov26s_July8")

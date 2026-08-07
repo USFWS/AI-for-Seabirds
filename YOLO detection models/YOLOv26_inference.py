@@ -1,13 +1,14 @@
 # Inputs: root_dir = folder with images;
 #         new_csv = detection csv to output
 #         model_path = path to YOLOv8 weights file
+import config
 
-root_dir = "D:/seabird_winter/seabirds_Feb22_23/"
-            # "#1_parent_images/JPG_20250122_145300")
-new_csv = "D:/seabird_winter/seabirds_Feb22_23/YOLOv11_Feb22_23.csv"
+root_dir = config.SOURCE_IMG
+new_csv = config.NEW_CSV
+export_dir = config.EXPORT_DIR
 
 #new_csv = "D:/WHCR_2025/12_WHCR_detection/8_inference/survey_095400_yolo10x_conf_20.csv"
-model_path= "C:/users/aware/desktop/MODELS FOR USE/seabird_yolov10_2024Q3.pt"
+model_path= config.MODEL_PATH
 
 import torch
 from sahi import AutoDetectionModel
@@ -18,11 +19,11 @@ import pandas as pd
 import os
 
 #device = "cuda:1" if torch.cuda.is_available() else "cpu"
-device = "cuda:2"
+device = "cuda:0"
 print(f"Using {device} device")
 
 detection_model = AutoDetectionModel.from_pretrained(
-    model_type='yolov11',
+    model_type='ultralytics',
     model_path=model_path,
     confidence_threshold=0.20,
     device=device # or 'cuda:0'
@@ -44,8 +45,8 @@ for root, dirs, files in os.walk(root_dir):
                 detection_model,
                 slice_height=1024,
                 slice_width=1024,
-                overlap_height_ratio=0.2,
-                overlap_width_ratio=0.2,
+                overlap_height_ratio=0.0,
+                overlap_width_ratio=0.0,
                 postprocess_match_metric='IOU',
                 postprocess_type='GREEDYNMM',
                 postprocess_match_threshold = 0.20  # 0.20
@@ -96,4 +97,3 @@ del csv_data['ymax']
 del csv_data['temp_name']
 
 csv_data.to_csv(new_csv)
-
