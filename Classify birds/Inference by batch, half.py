@@ -7,12 +7,14 @@ import torch
 import csv
 import time
 
+import config
+
 batch_size= 67
 
-image_source = main_dir = "E:/R2_waterfowl/timer_img/demo/"
-new_csv = "E:/R2_waterfowl/timer_img/practice.csv"
+image_source = config.SOURCE_IMG
+new_csv = config.NEW_CSV
 
-model_path = "E:/R2_waterfowl/model_weights/2026_winter_waterfowl_swin_s_scripted1.pt"
+model_path = config.MODEL_PATH
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device") # must print "Using cuda device" to work
