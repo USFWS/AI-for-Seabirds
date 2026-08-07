@@ -9,7 +9,7 @@ import config
 # xml_path = path to voc annotations
 # json_file = temp file to export
 # new_yolo = final yolo path
-xml_path = "C:/users/bpickens/OneDrive - DOI/species_OneDrive/detection/new_train_annot/"
+xml_path = config.XML_INPUT
 json_output = config.JSON_OUTPUT
 yolo_output_dir = config.YOLO_OUTPUT_DIR
 
@@ -94,7 +94,6 @@ def addAnnoItem(object_name, image_id, category_id, bbox):
 
 def parseXmlFiles(xml_path):
     for f in os.listdir(xml_path):
-        print("okay")
 #        if not f.endswith('.xml'):
  #           continue
         bndbox = dict()
@@ -195,7 +194,6 @@ if __name__ == '__main__':
 
 # Defines functions first; implementation is on last 2 lines
 
-
 def convert_bbox_coco2yolo(img_width, img_height, bbox):
     """
     Inputs
@@ -261,7 +259,7 @@ def convert_coco_json_to_yolo_txt(output_path, json_file):
 
         with open(anno_txt, "w") as f:
             for anno in anno_in_image:
-                category = anno["category_id"]
+                category = anno["category_id"] - 1
                 bbox_COCO = anno["bbox"]
                 x, y, w, h = convert_bbox_coco2yolo(img_width, img_height, bbox_COCO)
                 f.write(f"{category} {x:.6f} {y:.6f} {w:.6f} {h:.6f}\n")

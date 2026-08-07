@@ -5,7 +5,7 @@ import pandas as pd
 import config
 
 # xml_path = path to voc annotations
-xml_path = "D:/species_2025/12_species_detection/5_tiles_voc_5perc_empty/"
+xml_input = config.XML_INPUT
 json_output = config.JSON_OUTPUT
 
 new_csv = config.NEW_CSV
@@ -91,7 +91,6 @@ def addAnnoItem(object_name, image_id, category_id, bbox):
 
 def parseXmlFiles(xml_path):
     for f in os.listdir(xml_path):
-        print("okay")
 #        if not f.endswith('.xml'):
  #           continue
 
@@ -185,7 +184,7 @@ def parseXmlFiles(xml_path):
 if __name__ == '__main__':
     print("LKJL")
  #   xml_path = 'Annotations'
-    parseXmlFiles(xml_path)
+    parseXmlFiles(xml_input)
     json.dump(coco, open(json_output, 'w'))
 
 
