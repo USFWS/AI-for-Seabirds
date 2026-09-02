@@ -1,5 +1,5 @@
 """
-Compare bounding boxes between two CSV files, grouped by image filename AND
+Compare bounding boxes between two CSV files, grouped by image unique_image_jpg AND
 class_id. Boxes of different classes are never compared against each other.
 
 Expected CSV columns (adjust COLUMN NAMES below to match your files):
@@ -11,17 +11,12 @@ against every SAME-CLASS predicted box, and overlap metrics are computed.
 import pandas as pd
 import config
 
-# gt_csv = config.CSV_ground_truth
-# pred_boxes = config.CSV_predictions
-# new_csv = config.NEW_CSV
-
 gt_csv = config.CSV_ground_truth
 pred_boxes = config.CSV_predictions
 new_csv = config.NEW_CSV # this compares set 1 to 2
+iou_threshold = 0.50
 
-
-
-# ---- CONFIG: adjust these to match your actual column names ----
+# ---- csv config: ----
 FILENAME_COL = "unique_image_jpg"
 X_COL = "xmin"
 Y_COL = "ymin"
@@ -31,17 +26,13 @@ CLASS_COL = "class_id"
 
 def xywh_to_xyxy(x, y, w, h):
     """Convert (x, y, width, height) -> (xmin, ymin, xmax, ymax).
-    Assumes x, y is the top-left corner."""
+    """
     return x, y, x + w, y + h
 
 def box_overlap(box_a, box_b):
     """
     Given two boxes in (xmin, ymin, xmax, ymax) format, compute:
-      - intersection area
-      - union area
       - IoU (Intersection over Union)
-      - % of box A covered by the overlap
-      - % of box B covered by the overlap
     Returns None-ish zeroed result if there is no overlap.
     """
     ax1, ay1, ax2, ay2 = box_a
@@ -61,16 +52,10 @@ def box_overlap(box_a, box_b):
     union_area = area_a + area_b - inter_area
 
     iou = inter_area / union_area if union_area > 0 else 0.0
-    pct_of_a = inter_area / area_a if area_a > 0 else 0.0
-    pct_of_b = inter_area / area_b if area_b > 0 else 0.0
 
     return {
-        "intersection_area": inter_area,
-        "union_area": union_area,
         "iou": iou,
-        "pct_of_box_a": pct_of_a,
-        "pct_of_box_b": pct_of_b,
-        "overlaps": inter_area > 0,
+        "iou_overlaps": iou > iou_threshold,
     }
 
 def load_boxes(csv_path):
@@ -149,12 +134,8 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
                     "pred_row": None,
                     "gt_box": gt_entry["box"],
                     "pred_box": None,
-                    "intersection_area": 0,
-                    "union_area": None,
                     "iou": 0.0,
-                    "pct_of_box_a": 0.0,
-                    "pct_of_box_b": None,
-                    "overlaps": False,
+                    "iou_overlaps": False,
                 })
                 continue
 
@@ -162,7 +143,7 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
             for pred_entry in pred_entries:
                 metrics = box_overlap(gt_entry["box"], pred_entry["box"])
 
-                if only_overlaps and not metrics["overlaps"]:
+                if only_overlaps and not metrics["iou_overlaps"]:
                     continue
 
                 matched_any = True
@@ -186,12 +167,8 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
                     "pred_row": None,
                     "gt_box": gt_entry["box"],
                     "pred_box": None,
-                    "intersection_area": 0,
-                    "union_area": None,
                     "iou": 0.0,
-                    "pct_of_box_a": 0.0,
-                    "pct_of_box_b": None,
-                    "overlaps": False,
+                    "iou_overlaps": False,
                 })
 
     return pd.DataFrame(results)
@@ -222,9 +199,7 @@ def best_match_per_gt(gt_csv_path, pred_csv_path):
         .sort_values(["filename", "gt_row"])
         .reset_index(drop=True)
     )
-
     return best
-
 
 def full_match_report(gt_csv_path, pred_csv_path):
     """
@@ -235,7 +210,7 @@ def full_match_report(gt_csv_path, pred_csv_path):
         ground-truth box of the same class on the same image -- a false
         positive
 
-    A "row_type" column distinguishes the two kinds of rows:
+    A "object_type" column distinguishes the two kinds of rows:
       "gt"          -- a ground-truth box (see gt_row/gt_box; pred_row/pred_box
                         are None if unmatched)
       "false_positive" -- a prediction nobody claimed (see pred_row/pred_box;
@@ -251,7 +226,7 @@ def full_match_report(gt_csv_path, pred_csv_path):
     best = best_match_per_gt(gt_csv_path, pred_csv_path)
 
     gt_rows = best.copy()
-    gt_rows.insert(0, "row_type", "gt")
+    gt_rows.insert(0, "object_type", "gt")
 
     # Load raw predictions so we can find which ones were never claimed
     pred_boxes = load_boxes(pred_csv_path)
@@ -269,28 +244,23 @@ def full_match_report(gt_csv_path, pred_csv_path):
             key = (fname, class_id, entry["row_index"])
             if key not in claimed:
                 fp_rows.append({
-                    "row_type": "false_positive",
+                    "object_type": "false_positive",
                     "filename": fname,
                     "class_id": class_id,
                     "gt_row": None,
                     "pred_row": entry["row_index"],
                     "gt_box": None,
                     "pred_box": entry["box"],
-                    "intersection_area": None,
-                    "union_area": None,
                     "iou": None,
-                    "pct_of_box_a": None,
-                    "pct_of_box_b": None,
-                    "overlaps": None,
+                    "iou_overlaps": None,
                 })
 
     fp_df = pd.DataFrame(fp_rows)
 
     combined = pd.concat([gt_rows, fp_df], ignore_index=True) if not fp_df.empty else gt_rows
-    combined = combined.sort_values(["filename", "class_id", "row_type"]).reset_index(drop=True)
+    combined = combined.sort_values(["filename", "class_id", "object_type"]).reset_index(drop=True)
 
     return combined
-
 
 def _self_test_class_filtering():
     """
@@ -357,7 +327,7 @@ def _self_test_class_filtering():
         # since it was wrong-class) and img5's prediction (no GT box at all) = 5 rows
         assert len(combined) == 5, f"Expected 5 combined rows, got {len(combined)}"
 
-        fp_rows = combined[combined["row_type"] == "false_positive"]
+        fp_rows = combined[combined["object_type"] == "false_positive"]
         assert len(fp_rows) == 2, f"Expected 2 false-positive rows, got {len(fp_rows)}"
 
         fp_filenames = set(fp_rows["filename"])
@@ -394,8 +364,9 @@ if __name__ == "__main__":
         combined_df.to_csv(new_csv, index=False)
         print(f"\nSaved {len(combined_df)} records to {new_csv}")
 
-        missed = combined_df[(combined_df["row_type"] == "gt") & (combined_df["pred_row"].isna())]
+        missed = combined_df[(combined_df["object_type"] == "gt") & (combined_df[
+                                                                         "pred_row"].isna())]
         print(f"\n{len(missed)} ground-truth boxes have no matching prediction of the same class (missed detections).")
 
-        false_positives = combined_df[combined_df["row_type"] == "false_positive"]
+        false_positives = combined_df[combined_df["object_type"] == "false_positive"]
         print(f"{len(false_positives)} predictions were not claimed by any ground-truth box (false positives).")

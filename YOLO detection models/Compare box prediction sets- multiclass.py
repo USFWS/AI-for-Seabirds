@@ -11,14 +11,14 @@ against every SAME-CLASS box in file B, and overlap metrics are computed.
 import pandas as pd
 import config
 
-pred_boxes1 = "D:/code_dev/pred1.csv"
-pred_boxes2 = "D:/code_dev/pred2.csv"
+pred_boxes1 = config.CSV_A
+pred_boxes2 = config.CSV_B
+iou_threshold = 0.50
 
 # new_csv1 = config.NEW_CSV # this compares set 1 to 2
 # new_csv2 = config.NEW_CSV2 # this compares set 2 to 1
-
-new_csv1 = "D:/code_dev/compare1_2.csv" # this compares set 1 to 2
-new_csv2 = "D:/code_dev/compare2_1.csv"
+new_csv1 = "D:/seabird_detection/rd3_results/compare1_2.csv" # this compares set 1 to 2
+new_csv2 = "D:/seabird_detection/rd3_results/compare2_1.csv"
 
 # ---- CONFIG: adjust these to match your actual column names ----
 FILENAME_COL = "unique_image_jpg"
@@ -60,16 +60,10 @@ def box_overlap(box_a, box_b):
     union_area = area_a + area_b - inter_area
 
     iou = inter_area / union_area if union_area > 0 else 0.0
-    pct_of_a = inter_area / area_a if area_a > 0 else 0.0
-    pct_of_b = inter_area / area_b if area_b > 0 else 0.0
 
     return {
-        "intersection_area": inter_area,
-        "union_area": union_area,
         "iou": iou,
-        "pct_of_box_a": pct_of_a,
-        "pct_of_box_b": pct_of_b,
-        "overlaps": inter_area > 0,
+        "iou_overlaps": iou > iou_threshold,
     }
 
 def load_boxes(csv_path):
@@ -149,12 +143,8 @@ def compare_two_prediction_sets(csv_path_1, csv_path_2, only_overlaps=False):
                     "set2_row": None,
                     "set1_box": entry_1["box"],
                     "set2_box": None,
-                    "intersection_area": 0,
-                    "union_area": None,
                     "iou": 0.0,
-                    "pct_of_box_a": 0.0,
-                    "pct_of_box_b": None,
-                    "overlaps": False,
+                    "iou_overlaps": False,
                 })
                 continue
 
@@ -162,7 +152,7 @@ def compare_two_prediction_sets(csv_path_1, csv_path_2, only_overlaps=False):
             for entry_2 in entries_2:
                 metrics = box_overlap(entry_1["box"], entry_2["box"])
 
-                if only_overlaps and not metrics["overlaps"]:
+                if only_overlaps and not metrics["iou_overlaps"]:
                     continue
 
                 matched_any = True
@@ -184,12 +174,8 @@ def compare_two_prediction_sets(csv_path_1, csv_path_2, only_overlaps=False):
                     "set2_row": None,
                     "set1_box": entry_1["box"],
                     "set2_box": None,
-                    "intersection_area": 0,
-                    "union_area": None,
                     "iou": 0.0,
-                    "pct_of_box_a": 0.0,
-                    "pct_of_box_b": None,
-                    "overlaps": False,
+                    "iou_overlaps": False,
                 })
 
     return pd.DataFrame(results)
@@ -229,11 +215,7 @@ def best_match_each_direction(csv_path_1, csv_path_2):
         zero_iou_mask = best["iou"] == 0.0
         best.loc[zero_iou_mask, match_row_col] = None
         best.loc[zero_iou_mask, match_box_col] = None
-        best.loc[zero_iou_mask, "intersection_area"] = 0
-        best.loc[zero_iou_mask, "union_area"] = None
-        best.loc[zero_iou_mask, "pct_of_box_a"] = 0.0
-        best.loc[zero_iou_mask, "pct_of_box_b"] = None
-        best.loc[zero_iou_mask, "overlaps"] = False
+        best.loc[zero_iou_mask, "iou_overlaps"] = False
 
         return best
 
@@ -256,18 +238,13 @@ def best_match_each_direction(csv_path_1, csv_path_2):
             "set1_row": best_from_2_raw["set2_row"],
             "set2_box": best_from_2_raw["set1_box"],
             "set1_box": best_from_2_raw["set2_box"],
-            "intersection_area": best_from_2_raw["intersection_area"],
-            "union_area": best_from_2_raw["union_area"],
             "iou": best_from_2_raw["iou"],
-            "pct_of_box_a": best_from_2_raw["pct_of_box_b"],
-            "pct_of_box_b": best_from_2_raw["pct_of_box_a"],
-            "overlaps": best_from_2_raw["overlaps"],
+            "iou_overlaps": best_from_2_raw["iou_overlaps"],
         })
         # Reorder columns to match best_from_1 for consistency
         best_from_2 = best_from_2[[
             "filename", "class_id", "set1_row", "set2_row", "set1_box", "set2_box",
-            "intersection_area", "union_area", "iou",
-            "pct_of_box_a", "pct_of_box_b", "overlaps",
+             "iou", "iou_overlaps",
         ]]
 
     return best_from_1, best_from_2
