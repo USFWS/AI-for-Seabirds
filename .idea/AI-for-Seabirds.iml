@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/Imagery mgt and preprocessing/detection_utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/YOLO detection models/detection_utils" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="C:\Users\bpickens\AppData\Local\miniconda3\envs\mb2" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

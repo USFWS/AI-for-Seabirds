@@ -25,7 +25,7 @@ print(f"Using {device} device")
 detection_model = AutoDetectionModel.from_pretrained(
     model_type='ultralytics',
     model_path=model_path,
-    confidence_threshold=0.20,
+    confidence_threshold=0.25,
     device=device # or 'cuda:0'
 )
 
@@ -61,7 +61,6 @@ for root, dirs, files in os.walk(root_dir):
                 for result1 in object_prediction_list:
                     writer.writerow([source, result1.bbox, result1.category, result1.score])
 
-print("OKAY")
 csv_data = pd.read_csv(new_csv)
 print(csv_data)
 csv_data['unique_image_jpg'] = csv_data['unique_image_jpg'].apply(os.path.basename)

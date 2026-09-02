@@ -22,7 +22,7 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
 # Input yaml file
-yaml_path = "D:/seabird_detection/DATASETS_results/seabird_detect.yaml"
+yaml_path = "D:/seabird_detection/DATASETS_results/seabird_detect5.yaml"
 # TRAIN A MODEL YOLOv26 model
 # YOLO options:
 # Load a model
@@ -30,12 +30,16 @@ model = YOLO("yolo26s.pt")  # load a pretrained model (recommended for training)
 # model = YOLO("yolo26n.yaml").load("yolo26n.pt")  # build from YAML and transfer weights
 model.info()
 
+def main():
 # Train the model
-results = model.train(data= yaml_path,
-                      batch=4, optimizer = "SGD",
-                      epochs = 120,
-                      task="detect", imgsz=1024, patience=15,
-                      device=device, max_det=100, lr0=0.1,
-                      cache="disk", workers = 18,
-                      project="C:/BP/seabird_yolo_s_/",
-                      name="yolov26s_July8")
+    results = model.train(data=yaml_path,
+                      batch=4, optimizer="Adam",
+                      epochs=25,
+                      task="detect", imgsz=1024, patience=0,
+                      device=device, max_det=600, lr0=0.001,
+                      cache="disk", workers=12,
+                      project="D:/seabird_detection/DATASETS_results/yolo26s_v3_forward/",
+                      name="yolo26s_v2_rd3_Aug31_forward")
+
+if __name__ == "__main__":
+    main()

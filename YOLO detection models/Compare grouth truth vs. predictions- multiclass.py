@@ -15,9 +15,9 @@ import config
 # pred_boxes = config.CSV_predictions
 # new_csv = config.NEW_CSV
 
-gt_csv = "D:/code_dev/pred1.csv"
-pred_boxes = "D:/code_dev/pred2.csv"
-new_csv = "D:/code_dev/compare_gt_v_pred.csv" # this compares set 1 to 2
+gt_csv = config.CSV_ground_truth
+pred_boxes = config.CSV_predictions
+new_csv = config.NEW_CSV # this compares set 1 to 2
 
 
 
