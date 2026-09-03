@@ -12,7 +12,7 @@ import pandas as pd
 import config
 
 gt_csv = config.CSV_ground_truth
-pred_boxes = config.CSV_predictions
+pred_boxes = config.CSV_ground_truth
 new_csv = config.NEW_CSV # this compares set 1 to 2
 iou_threshold = 0.50
 
@@ -23,6 +23,7 @@ Y_COL = "ymin"
 W_COL = "w"
 H_COL = "h"
 CLASS_COL = "class_id"
+SCORE_COL = "score"
 
 def xywh_to_xyxy(x, y, w, h):
     """Convert (x, y, width, height) -> (xmin, ymin, xmax, ymax).
@@ -61,12 +62,11 @@ def box_overlap(box_a, box_b):
 def load_boxes(csv_path):
     """
     Load a CSV and return a dict keyed by (filename, class_id) -> list of
-    {"row_index", "box"} entries.
+    {"row_index", "box", "score"} entries.
 
-    Keying by (filename, class_id) instead of just filename means boxes of
-    different classes are never even considered as candidates for each other
-    anywhere downstream -- a "no match" for one class can't accidentally get
-    filled in by an overlapping box of a different class.
+    "score" is only meaningful for predictions files. If the CSV doesn't have
+    a SCORE_COL column (e.g. a ground-truth file), score will be None for
+    every entry.
     """
     df = pd.read_csv(csv_path)
     df.columns = [c.strip() for c in df.columns]  # strip whitespace from headers
@@ -78,6 +78,7 @@ def load_boxes(csv_path):
             f"Missing expected columns {missing} in {csv_path}. "
             f"Found columns: {list(df.columns)}"
         )
+    has_score = SCORE_COL in df.columns
 
     # Check for exact duplicate rows, which can cause confusing repeated comparisons
     dupe_mask = df.duplicated(subset=[FILENAME_COL, X_COL, Y_COL, W_COL, H_COL, CLASS_COL], keep=False)
@@ -91,8 +92,11 @@ def load_boxes(csv_path):
         fname = row[FILENAME_COL]
         class_id = row[CLASS_COL]
         box = xywh_to_xyxy(row[X_COL], row[Y_COL], row[W_COL], row[H_COL])
+        score = row[SCORE_COL] if has_score else None
         key = (fname, class_id)
-        boxes_by_image_class.setdefault(key, []).append({"row_index": idx, "box": box})
+        boxes_by_image_class.setdefault(key, []).append({
+            "row_index": idx, "box": box, "score": score
+        })
 
     return boxes_by_image_class
 
@@ -134,6 +138,7 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
                     "pred_row": None,
                     "gt_box": gt_entry["box"],
                     "pred_box": None,
+                    "pred_score": 0,
                     "iou": 0.0,
                     "iou_overlaps": False,
                 })
@@ -154,6 +159,7 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
                     "pred_row": pred_entry["row_index"],
                     "gt_box": gt_entry["box"],
                     "pred_box": pred_entry["box"],
+                    "pred_score": pred_entry["score"],
                     **metrics,
                 })
 
@@ -167,6 +173,7 @@ def compare_gt_vs_pred(gt_csv_path, pred_csv_path, only_overlaps=False):
                     "pred_row": None,
                     "gt_box": gt_entry["box"],
                     "pred_box": None,
+                    "pred_score": entry["score"],
                     "iou": 0.0,
                     "iou_overlaps": False,
                 })
@@ -251,6 +258,7 @@ def full_match_report(gt_csv_path, pred_csv_path):
                     "pred_row": entry["row_index"],
                     "gt_box": None,
                     "pred_box": entry["box"],
+                    "pred_score": entry["score"],
                     "iou": None,
                     "iou_overlaps": None,
                 })
@@ -277,6 +285,7 @@ def _self_test_class_filtering():
     import tempfile, os
 
     header = f"{FILENAME_COL},{X_COL},{Y_COL},{W_COL},{H_COL},{CLASS_COL}"
+    pred_header = f"{header},{SCORE_COL}"
 
     gt_content = (
         f"{header}\n"
@@ -286,10 +295,10 @@ def _self_test_class_filtering():
     )
 
     pred_content = (
-        f"{header}\n"
-        "img1.jpg,1,1,10,10,0\n"    # class 0, correctly matches the GT box above
-        "img2.jpg,0,0,10,10,0\n"    # class 0, same geometry as GT above but WRONG class
-        "img5.jpg,0,0,10,10,0\n"    # class 0, no GT box at all on this image -- pure false positive
+        f"{pred_header}\n"
+        "img1.jpg,1,1,10,10,0,0.91\n"
+        "img2.jpg,0,0,10,10,0,0.77\n"
+        "img5.jpg,0,0,10,10,0,0.55\n"
     )
 
     with tempfile.TemporaryDirectory() as tmp:
