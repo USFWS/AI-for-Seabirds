@@ -29,6 +29,9 @@ detection_model = AutoDetectionModel.from_pretrained(
     device=device # or 'cuda:0'
 )
 
+detection_model.model.overrides['half'] = True
+detection_model.model.overrides['imgsz'] = 1024
+
 with open(new_csv, 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['unique_image_jpg', "bbox", "class", "score"])
