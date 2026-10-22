@@ -11,8 +11,8 @@ against every SAME-CLASS predicted box, and overlap metrics are computed.
 import pandas as pd
 import config
 
-gt_csv = config.CSV_ground_truth
-pred_boxes = config.CSV_ground_truth
+gt_csv = config.CSV_GT
+pred_boxes = config.CSV_PREDICT1
 new_csv = config.NEW_CSV # this compares set 1 to 2
 iou_threshold = 0.50
 

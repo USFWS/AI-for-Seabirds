@@ -11,14 +11,13 @@ against every SAME-CLASS box in file B, and overlap metrics are computed.
 import pandas as pd
 import config
 
-pred_boxes1 = config.CSV_A
-pred_boxes2 = config.CSV_B
-iou_threshold = 0.50
+pred_boxes1 ="E:/yolo_2025_Feb_forward_water3.csv"
+pred_boxes2 = "E:/yolo_2025_Feb_reverse_water3.csv"
+iou_threshold = 0.10
 
-# new_csv1 = config.NEW_CSV # this compares set 1 to 2
-# new_csv2 = config.NEW_CSV2 # this compares set 2 to 1
-new_csv1 = "D:/seabird_detection/rd3_results/compare1_2.csv" # this compares set 1 to 2
-new_csv2 = "D:/seabird_detection/rd3_results/compare2_1.csv"
+#new_csv1 = "E:/compare1_2.csv" # this compares set 1 to 2
+#new_csv2 = "E:/compare2_1.csv" # this compares set 2 to 1
+export_csv = "E:/yolo_box_comparison.csv" # this compares set 1 to 2
 
 # ---- CONFIG: adjust these to match your actual column names ----
 FILENAME_COL = "unique_image_jpg"
@@ -350,11 +349,19 @@ if __name__ == "__main__":
 
     print("=== Best match in set 2, for each box in set 1 ===")
     print(best_from_1.to_string(index=False))
-    best_from_1.to_csv(new_csv1, index=False)
+  #  best_from_1.to_csv(new_csv1, index=False)
 
     print("\n=== Best match in set 1, for each box in set 2 ===")
     print(best_from_2.to_string(index=False))
-    best_from_2.to_csv(new_csv2, index=False)
+  #  best_from_2.to_csv(new_csv2, index=False)
+
+    # Combine 2 pandas dataframes
+    combined = pd.concat([best_from_1, best_from_2], ignore_index=True)
+
+    # Remove duplicates
+    combined = combined.drop_duplicates()
+
+    combined.to_csv(export_csv, index=False)
 
     # Boxes in set 1 with no reasonable match in set 2 (models disagree)
     unmatched_1 = best_from_1[best_from_1["set2_row"].isna()]
@@ -362,3 +369,5 @@ if __name__ == "__main__":
 
     unmatched_2 = best_from_2[best_from_2["set1_row"].isna()]
     print(f"{len(unmatched_2)} boxes in set 2 have no overlapping match in set 1.")
+
+    ## Combine 2 csv

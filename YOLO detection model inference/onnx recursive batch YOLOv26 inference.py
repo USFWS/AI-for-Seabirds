@@ -7,7 +7,6 @@ from sahi import AutoDetectionModel
 import sahi
 from sahi.predict import get_sliced_prediction
 import pickle
-import tensorrt
 from ultralytics import YOLO
 import config
 

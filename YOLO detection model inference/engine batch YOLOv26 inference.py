@@ -17,7 +17,7 @@ import config
 source_img = config.SOURCE_IMG
 new_csv = config.NEW_CSV
 # visual_path = config.VISUAL_PATH
-model_path = config.MODEL_PATH
+model_path = config.MODEL_PATH_DETECT
 
 project_name = config.PROJECT_NAME
 visual_path = config.VISUAL_PATH
@@ -59,7 +59,7 @@ print("Warmup done.")
 result = sahi.predict.predict(
     detection_model=detection_model,
     model_type='ultralytics',
-    model_confidence_threshold=0.20,
+    model_confidence_threshold=0.25,
     slice_height=1024,
     slice_width=1024,
     no_standard_prediction=True,
@@ -97,7 +97,6 @@ x=0
 for root, dirs, files in os.walk(pickle_dir):
 	for filename in files:
 		path = os.path.join(root, filename)
-
 		with open(path, 'rb') as file:
 			detections = pickle.load(file)
 
