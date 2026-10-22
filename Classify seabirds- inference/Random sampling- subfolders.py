@@ -3,6 +3,7 @@ import os
 import shutil
 import random
 import numpy
+#new
 
 flight_folder = "C:/users/aware/desktop/flight_folder"
 infer_crops = "infer_bird_crops"

@@ -5,7 +5,7 @@ import shutil
 
 ## New inputs: drive_path = root directory, flight_name = flight folder, model_path = model to apply
 root_path = "D:/classify_seabirds/"
-flight_name = "inference_2024"
+flight_name = "inference_2024x"
 
 new_csv = root_path + flight_name + "/classify_" + flight_name + ".csv"
 root_export = root_path + flight_name + "/classification_results/"

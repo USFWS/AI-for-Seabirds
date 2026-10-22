@@ -14,6 +14,12 @@ from torch.optim import lr_scheduler
 torch.set_printoptions(edgeitems=2)
 # torch.manual_seed(123)
 import numpy as np
+import time
+import torch.amp
+import Classification_utils
+from Classification_utils import train_MBC, test_MBC
+from Classification_utils import model_plots
+
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 use_cuda = torch.cuda.is_available()
@@ -21,14 +27,14 @@ if device:
     print(torch.cuda.get_device_name())
 
 # Inputs
-csv_train = "D:/seabird_families/seabird_family_train1.csv"
-csv_test = "D:/seabird_families/seabird_family_test1.csv"
-image_folder = "D:/seabird_families/crops/"
+csv_train = "H:/seabird_family/1_DATASETS/by_random/family_50.50_random_train.csv"
+csv_test = "H:/seabird_family/1_DATASETS/by_random/family_50.50_random_test.csv"
+image_folder = "H:/seabird_family/1_DATASETS/model_crops/"
+model_save = "H:/seabird_family/1_DATASETS/by_random/family_swin_t_50.50_random_half_works.pt"
 
-import Classification_utils
-from Classification_utils import train_MBC, test_MBC
+start_time = time.time()
 
-# Valdiation model 2nd
+# Validation model
 val_losses = []
 val_acc = []
 
@@ -45,16 +51,19 @@ class CustomTrain(torch.utils.data.Dataset):  ## used for custom data loading
         self.annotations = pd.read_csv(csv_path)
         self.image_folder = image_folder
         self.transform = transform_train
-        self.class2index = {"Accipitridae": 0, "Alcidae": 1,
-                            "Anatidae": 2, "Ardeidae": 3,
-                            "Charadriiformes": 4, "Cygnus": 5, "Gaviidae": 6, "Haematopodidae": 7,
-                            "Hydrobatidae": 8, "Laridae": 9, "Pelecanidae": 10,
-                            "Phalacrocoracidae": 11, "Podicipedidae": 12,
-                            "Procellariidae": 13,
-                            "Scoter": 14, "Skimmer": 15,
-                            "Sterninae": 16,
-                            "Sulidae": 17, "Threskiornithidae": 18, "Artificial": 19, "Unlisted_object": 20
+        self.class2index = {"ATPU": 0, "BCPE": 1,
+                            "BLSC": 2, "BOGU": 3,
+                            "BRPE": 4, "BUFF": 5, "CANG": 6, "COEI": 7,
+                            "COGO": 8, "COLO": 9, "DCCO": 10,
+                            "GBBG": 11, "HERG": 12,
+                            "HOGR": 13,
+                            "LAGU": 14, "LTDU": 15,
+                            "NOGA": 16,
+                            "not_wildlife": 17, "RBME": 18, "REDH": 19,
+                            "ROYT": 20, "RTLO": 21, "SCAU": 22, "SNGO": 23, "SUSC": 24,
+                            "TUSW": 25, "WWSC": 26
                             }
+
     def __len__(self):
         return len(self.annotations)
 
@@ -76,16 +85,19 @@ class CustomDataset(torch.utils.data.Dataset):  ## used for custom data loading
         self.annotations = pd.read_csv(csv_path)
         self.image_folder = image_folder
         self.transform = transform_test
-        self.class2index = {"Accipitridae": 0, "Alcidae": 1,
-                        "Anatidae": 2, "Ardeidae": 3,
-                        "Charadriiformes": 4, "Cygnus": 5, "Gaviidae": 6, "Haematopodidae": 7,
-                        "Hydrobatidae": 8, "Laridae": 9, "Pelecanidae": 10,
-                        "Phalacrocoracidae": 11, "Podicipedidae": 12,
-                        "Procellariidae": 13,
-                        "Scoter": 14, "Skimmer": 15,
-                        "Sterninae": 16,
-                        "Sulidae": 17, "Threskiornithidae": 18, "Artificial": 19, "Unlisted_object": 20
-                        }
+        self.class2index = {"ATPU": 0, "BCPE": 1,
+                            "BLSC": 2, "BOGU": 3,
+                            "BRPE": 4, "BUFF": 5, "CANG": 6, "COEI": 7,
+                            "COGO": 8, "COLO": 9, "DCCO": 10,
+                            "GBBG": 11, "HERG": 12,
+                            "HOGR": 13,
+                            "LAGU": 14, "LTDU": 15,
+                            "NOGA": 16,
+                            "not_wildlife": 17, "RBME": 18, "REDH": 19,
+                            "ROYT": 20, "RTLO": 21, "SCAU": 22, "SNGO": 23, "SUSC": 24,
+                            "TUSW": 25, "WWSC": 26
+                            }
+
 
     def __len__(self):
         return len(self.annotations)
@@ -135,7 +147,7 @@ class_weights = class_weights.to(device)
 print("Class weights: ", class_weights)
 
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 # Load a pretrained transformer model
 # Available models: swin_s, swin_t
@@ -143,8 +155,13 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 from torchvision.models import swin_s, swin_t, swin_b, maxvit_t, maxvit, swin_v2_t, swin_v2_s
 
 ## Swin models
-weights = torchvision.models.Swin_S_Weights.IMAGENET1K_V1
-model = models.swin_s(weights= weights)
+#weights = torchvision.models.Swin_S_Weights.IMAGENET1K_V1
+# model = models.swin_s(weights= weights)
+
+weights = torchvision.models.Swin_T_Weights.IMAGENET1K_V1
+model = models.swin_t(weights= weights)
+
+# print("Model is data type: ", model.type)
 
 ## Swin models v2
 #weights = torchvision.models.Swin_V2_T_Weights.IMAGENET1K_V1
@@ -171,20 +188,51 @@ model.fc = nn.Sequential(# nn.Linear(2048,512), ##Resent50 only
                          nn.ReLU(),
                          nn.Linear(250,125),
                          nn.ReLU(),
-                         nn.Linear(125,34),
+                         nn.Linear(125,20),
                          nn.Softmax(dim=1))
 model.to(device)
+# model = model.half()
 ################
 # criterion = nn.CrossEntropyLoss()
 criterion = FocalLoss(alpha=class_weights, gamma=2)
-n_epoch = 8
+n_epoch = 12
 #optimizer = optim.SGD(model.parameters(),lr= 0.001, momentum = 0.90) ##0.001 good start
 optimizer = optim.Adam (model.parameters(), lr= 0.00001)
 
+e1 = 1
+
 for epoch in range(1,n_epoch+1):
+    start_epoch = time.time()
     Classification_utils.train_MBC.train(epoch, model, train_loader, device=device, optimizer=optimizer, criterion=criterion)
     Classification_utils.test_MBC.test(epoch, model, test_loader, device=device, optimizer=optimizer, criterion=criterion)
+    e1 = e1 +1
+
+
+
+    end_epoch = time.time()
+    duration_min = (end_epoch - start_epoch) / 60
+    remaining_epoch = (n_epoch - e1)
+    remaining_time = duration_min * remaining_epoch
+
+    print("epoch (minutes): ", duration_min)
+    print("Expected completion (minutes): ", remaining_time)
+
+
+print("Start time: ", start_time)
+end_time = time.time()
+duration_min = (end_time - start_time)/60
+duration_sec = duration_min*60
+duration_hrs = duration_min / 60
+
+print("duration (seconds): ", duration_sec)
+print("duration (minutes): ", duration_min)
+print("duration (hours): ",duration_hrs)
 
 # export model and weights
-model_scripted = torch.jit.script(model)
-model_scripted.save('C:/users/aware/desktop/2025_Apri9_seabird_family_swin_s_scripted1.pt')
+#model_scripted = torch.jit.script(model)
+#model_scripted.save("H:/seabird_family/1_DATASETS/by_image/family_swin_t_50.50_by_image.pt")
+
+# export 16 bit precision
+model_half = model.half()
+model_scripted_half = torch.jit.script(model_half)
+model_scripted_half.save(model_save)
