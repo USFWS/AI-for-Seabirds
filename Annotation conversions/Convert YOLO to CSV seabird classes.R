@@ -11,14 +11,14 @@ library (plyr)
 # those are not needed for yolo implementation
 
 # Enter your directory
-setwd(file.path('D:', 'Hive_batch4', 'Hive_batch4_annotations_empty'))
+setwd(file.path('E:', 'Seabird_detection', 'datasets', 'dataset_v6_forward', 'labels', 'val'))
 
 # Enter the name of csv to export
-export_csv = "hive_batch4_empty_annot.csv"
+export_csv = "dataset_v6_forward_test_data.csv"
 
 # Parent image dimensions
-parent_width = 6464
-parent_height = 4852
+parent_width = 1024
+parent_height = 1024
 
 # Optional: class index to class name
 ## Add more classes as needed
